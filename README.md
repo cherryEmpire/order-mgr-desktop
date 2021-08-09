@@ -3,6 +3,7 @@
 # 打包
 ```text
 pyinstaller -F -w main.py
+pyinstaller -F -w --icon=main.ico main.py
 ```
 # qrc
 ```text

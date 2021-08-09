@@ -7,6 +7,25 @@ from PySide2 import QtWidgets, QtCore
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QLineEdit, QMessageBox, QItemDelegate
 
+qss_str = """
+    QPushButton {
+        width: 50px;
+        color: #FFFFFF;
+        background-color: #169BD5;
+        border-radius: 3px;
+        height: 30px;
+    }
+    QPushButton:hover {
+        width: 50px;
+        background: #4662D9;
+        height: 30px;
+    }
+    QPushButton::pressed {
+        width: 50px;
+        background: #169BD5;
+        height: 30px;
+    }
+"""
 
 class PasswordEdit(QLineEdit):
     """
@@ -53,6 +72,7 @@ class MessageBox(QMessageBox):
         self.setStandardButtons(self.Close)  # 关闭按钮
         self.closeBtn = self.button(self.Close)  # 获取关闭按钮
         self.closeBtn.setText('关闭')
+        self.closeBtn.setStyleSheet(qss_str)
 
 
 class DeleteMessageBox(QMessageBox):
@@ -63,8 +83,10 @@ class DeleteMessageBox(QMessageBox):
         self.setStandardButtons(self.Ok | self.Cancel)
         self.cancelBtn = self.button(self.Cancel)
         self.cancelBtn.setText('取消')
+        self.cancelBtn.setStyleSheet(qss_str)
         self.deleteBtn = self.button(self.Ok)
         self.deleteBtn.setText('删除')
+        self.deleteBtn.setStyleSheet(qss_str)
 
 
 class ReadOnlyDelegate(QItemDelegate):

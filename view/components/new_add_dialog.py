@@ -27,8 +27,10 @@ class NewAddDialog(QDialog):
 
         self.button_layout = QHBoxLayout(self)
         self.button_ok = QPushButton('确定')
+        self.button_ok.setObjectName('operation-button')
         self.button_ok.clicked.connect(self.onclick_ok)
         self.button_cancel = QPushButton('取消')
+        self.button_cancel.setObjectName('operation-button')
         self.button_cancel.clicked.connect(self.onclick_cancel)
         self.button_layout.addWidget(self.button_ok)
         self.button_layout.addWidget(self.button_cancel)

@@ -5,6 +5,7 @@
 from PySide2.QtCore import QObject
 
 from db.user_info import UserDto
+from view.components.common_components import MessageBox
 
 
 class MainWindowToolBarContext(QObject):
@@ -44,10 +45,14 @@ class MainWindowToolBarContext(QObject):
                 self.mainwindow.product_info_table.setVisible(True)
 
     def open_help(self):
-        pass
+        self.help_box = MessageBox(text='订单模板管理:可以新建模板\r\n订单管理:在模板中新建订单\r\n产品管理:管理产品信息，用于订单的中价格查询\r\n帮助\r\n关于')
+        self.help_box.setWindowTitle("帮助")
+        self.help_box.show()
 
     def open_about(self):
-        pass
+        self.about_box = MessageBox(text='销售单管理系统v1.0\r\nAuthor 一叶飘零Cherry')
+        self.about_box.setWindowTitle("关于")
+        self.about_box.show()
 
     def on_click_product_type_list_item(self, item):
         self.mainwindow.product_info_table.product_type_id = item.id

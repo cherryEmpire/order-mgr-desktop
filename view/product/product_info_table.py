@@ -50,6 +50,7 @@ class ProductInfoTable(QWidget):
         self.add_product_info = QPushButton()
         self.add_product_info.clicked.connect(self.on_add_product_info_clicked)
         self.add_product_info.setIcon(QIcon(':/icon/icons/add.png'))
+        self.add_product_info.setFixedHeight(40)
 
         self.main_layout.addWidget(self.add_product_info)
         self.reg_exp = QRegExp("^(-?\d+)(\.\d+)?$")

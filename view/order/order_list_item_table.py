@@ -58,6 +58,7 @@ class OrderListItemTable(QWidget):
         self.add_order_detail = QPushButton()
         self.add_order_detail.clicked.connect(self.on_add_order_detail_clicked)
         self.add_order_detail.setIcon(QIcon(':/icon/icons/add.png'))
+        self.add_order_detail.setFixedHeight(40)
 
         self.main_layout.addWidget(self.add_order_detail)
         self.reg_exp = QRegExp("^(-?\d+)(\.\d+)?$")
