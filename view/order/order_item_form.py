@@ -9,7 +9,8 @@ from PySide2.QtWidgets import QDialog, QLineEdit, QVBoxLayout, QHBoxLayout, QPus
     QLabel, QTableWidget, QTableWidgetItem, QWidget, QAbstractItemView, QHeaderView, QStyleFactory, QSizePolicy, QScrollBar, QTreeWidgetItem
 
 from db.order_info import OrderInfo
-from db.order_sale_list import OrderSaleList, OrderSaleDto, OrderSaleProductDto
+from db.order_sale_list import OrderSaleList, OrderSaleDto, OrderSaleProductDto, to_float
+from db.product_info import ProductInfo
 from db.user_info import UserDto
 from utils.common_util import get_chinese_all_upper, num2money_format
 from utils.constants import HEADER_FONT
@@ -247,8 +248,8 @@ class OrderDetailForm(QDialog):
         dto.order_id = self.order_id
         dto.order_no = self.header_label8.text()
         dto.customer_company = self.header_label2.text()
-        dto.customer_name = self.header_label2.text()
-        dto.customer_phone = self.header_label2.text()
+        dto.customer_name = self.header_label4.text()
+        dto.customer_phone = self.header_label6.text()
         dto.product_list = self.get_product_list()
         dto.create_user = self.tail_row3_label2.text()
         dto.order_manager = self.tail_row3_label4.text()
@@ -264,13 +265,13 @@ class OrderDetailForm(QDialog):
             dto = OrderSaleProductDto()
             item1 = self.table.item(i, 1)
             if item1.tree_item is not None:
-                tree_data = item1.tree_item.tree_data
+                tree_data = item1.tree_item
                 dto.product_info_id = tree_data[0]
                 dto.product_type_id = tree_data[1]
             dto.unit_desc = self.table.cellWidget(i, 2).text()
             dto.count = self.table.cellWidget(i, 3).text()
             dto.price = self.table.cellWidget(i, 4).text()
-            dto.desc = self.table.cellWidget(i, 5).text()
+            dto.desc = self.table.cellWidget(i, 6).text()
             result.append(dto)
         return result
 
@@ -396,11 +397,6 @@ class OrderDetailForm(QDialog):
             self.tail_row3_label4.setText(self.current_user.full_name)
             self.tail_row3_label4.setEnabled(False)
 
-    def load_data(self, detail_id, detail_no):
-        """加载数据库数据"""
-        self.detail_id = detail_id
-        pass
-
     def refresh_index(self):
         count = self.table.rowCount()
         for i in range(count):
@@ -447,7 +443,7 @@ class OrderDetailForm(QDialog):
         self.select_row = new_cell
 
     def on_product_combobox_changed(self, cell: QTableWidgetItem, item: QTreeWidgetItem):
-        self.table.item(cell.row(), 1).tree_item = item
+        self.table.item(cell.row(), 1).tree_item = item.tree_data
         self.table.cellWidget(cell.row(), 4).setText(item.tree_data[4])
 
     def on_cell_clicked(self, *args, **kwargs):
@@ -485,3 +481,65 @@ class OrderDetailForm(QDialog):
         self.total_cell_num.setText(str(product_amount) + ' 元')
         money_format = num2money_format(str(product_amount))
         self.total_cell_cn.setText(money_format)
+
+    def load_data(self, detail_id, detail_no, mode):
+        """加载数据库数据"""
+        """mode = 1 查看 mode=2 编辑"""
+        order_sale_list = OrderSaleList()
+        sale_dto: OrderSaleDto = order_sale_list.query_order_sale_list_by_id(detail_id)[0]
+        self.detail_id = detail_id
+
+        self.setWindowTitle(sale_dto.order_no)
+
+        self.tail_row3_label2.setText(sale_dto.create_user)
+        self.tail_row3_label4.setText(sale_dto.order_manager)
+        self.tail_row3_label6.setText(sale_dto.goods_sender)
+        self.tail_row3_label8.setText(sale_dto.goods_receiver)
+
+        self.header_label2.setText(sale_dto.customer_company)
+        self.header_label4.setText(sale_dto.customer_name)
+        self.header_label6.setText(sale_dto.customer_phone)
+        self.header_label8.setText(sale_dto.order_no)
+
+        product_amount = sale_dto.get_amount()
+        self.total_cell_count.setText(str(sale_dto.get_count()))
+        self.total_cell_num.setText(str(product_amount) + ' 元')
+        money_format = num2money_format(str(product_amount))
+        self.total_cell_cn.setText(money_format)
+        self.load_table(sale_dto)
+        bar = self.table.verticalScrollBar()
+        self.scrollbar.setRange(bar.minimum(), bar.maximum())
+        self.scrollbar.setSingleStep(bar.singleStep())
+        self.scrollbar.setPageStep(bar.pageStep())
+        if mode == 1:
+            self.tail_row3_label2.setEnabled(False)
+            self.tail_row3_label4.setEnabled(False)
+            self.tail_row3_label6.setEnabled(False)
+            self.tail_row3_label8.setEnabled(False)
+            self.header_label2.setEnabled(False)
+            self.header_label4.setEnabled(False)
+            self.header_label6.setEnabled(False)
+            self.header_label8.setEnabled(False)
+            self.table.setEnabled(False)
+            self.amount_table.setEnabled(False)
+            self.add_button.setVisible(False)
+            self.remove_button.setVisible(False)
+
+    def load_table(self, sale_dto: OrderSaleDto):
+        product_list = sale_dto.product_list
+        for index in range(len(product_list)):
+            data: OrderSaleProductDto = product_list[index]
+            self.add_row()
+            self.set_row_data(index, data)
+
+    def set_row_data(self, row_i, data: OrderSaleProductDto):
+        if data.product_info_id is not None and data.product_info_id != '':
+            product_info = ProductInfo()
+            product_info_data = product_info.query_product_info_by_id(data.product_info_id)[0]
+            self.table.item(row_i, 1).tree_item = product_info_data
+            self.table.cellWidget(row_i, 1).tool_btn.setText(product_info_data[2])
+        self.table.cellWidget(row_i, 2).setText(data.unit_desc)
+        self.table.cellWidget(row_i, 3).setText(data.count)
+        self.table.cellWidget(row_i, 4).setText(data.price)
+        self.table.cellWidget(row_i, 5).setText(str(to_float(data.price) * to_float(data.count)))
+        self.table.cellWidget(row_i, 6).setText(data.desc)

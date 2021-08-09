@@ -106,6 +106,12 @@ class OrderSaleDto:
             amount += to_float(item.price) * to_float(item.count)
         return amount
 
+    def get_count(self):
+        count = 0
+        for item in self.product_list:
+            count += to_float(item.count)
+        return count
+
 
 class OrderSaleList:
     """连接数据库 获取cursor"""
@@ -127,6 +133,17 @@ class OrderSaleList:
         self.commit()
         row_id = self.cur.execute("SELECT last_insert_rowid() from order_sale_list")
         return row_id.lastrowid
+
+    def update_order_sale_list(self, order_sale_dto: OrderSaleDto):
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        order_sale_dto.last_edit_date = now
+        product_list = product_list_tostr(order_sale_dto.product_list)
+        self.cur.execute("""UPDATE order_sale_list
+                    SET order_id=?, order_no=?, customer_company=?, customer_name=?, customer_phone=?, product_list=?, 
+                    last_edit_user=?, last_edit_date=?, order_manager=?, goods_sender=?, goods_receiver=?""",
+                         [order_sale_dto.order_id, order_sale_dto.order_no, order_sale_dto.customer_company, order_sale_dto.customer_name, order_sale_dto.customer_phone,
+                          product_list, order_sale_dto.last_edit_user, now, order_sale_dto.order_manager, order_sale_dto.goods_sender, order_sale_dto.goods_receiver])
+        self.commit()
 
     def delete_order_sale_list_by_id(self, id):
         self.cur.execute("DELETE FROM order_sale_list where id = ?", [id])

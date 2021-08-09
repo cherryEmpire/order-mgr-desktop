@@ -36,6 +36,7 @@ class TreeComboBox(QWidget):
     signal_item_selected = Signal(object, object)
 
     def init_ui(self, cell_item):
+        self.items = []
         self.cell_item = cell_item
         self.main_layout = QHBoxLayout(self)
         self.main_layout.setMargin(0)
@@ -71,6 +72,7 @@ class TreeComboBox(QWidget):
         product_type = ProductType()
         product_info = ProductInfo()
         data = product_type.fetch_data()
+        self.items = []
         for type_item in data:
             parent = QTreeWidgetItem(self.tree)
             parent.setText(0, type_item[1])
@@ -84,6 +86,7 @@ class TreeComboBox(QWidget):
                 child.leaf = True
                 child.setText(0, product_info_item[2])
                 child.setText(1, product_info_item[4])
+                self.items.append(child)
                 parent.addChild(child)
 
     def on_tree_item_clicked(self, *args, **kwargs):
@@ -94,4 +97,10 @@ class TreeComboBox(QWidget):
             self.signal_item_selected.emit(self.cell_item, item)
 
     def on_tool_btn_click(self, item):
+        if self.cell_item.tree_item is not None:
+            id = self.cell_item.tree_item[0]
+            for item in self.items:
+                if item.tree_data[0] == id:
+                    self.tree.expandItem(item.parent())
+                    self.tree.setItemSelected(item, True)
         self.signal_button_clicked.emit(self.cell_item)

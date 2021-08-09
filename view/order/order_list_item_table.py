@@ -75,6 +75,11 @@ class OrderListItemTable(QWidget):
         data.id = sale_id
         self.add_row(data)
 
+    def update_order_detail(self, keys, data: OrderSaleDto):
+        order_sale_list = OrderSaleList()
+        data.last_edit_user = self.current_user.full_name
+        order_sale_list.update_order_sale_list(data)
+
     def add_row(self, detail_dto: OrderSaleDto):
         row_index = self.table.rowCount()
         self.table.insertRow(row_index)
@@ -156,11 +161,21 @@ class OrderListItemTable(QWidget):
 
     def on_click_menu_view(self):
         row_index = self.table.currentIndex().row()
-        pass
+        order_info: OrderSaleDto = self.table.item(row_index, 1).order_info
+        self.view_form = OrderDetailForm()
+        self.view_form.init_ui(self.current_user, self.order_id, False)
+        self.view_form.load_data(order_info.id, order_info.order_no, 1)
+        self.view_form.signal_ok.connect(self.on_click_menu_cancel)
+        self.view_form.show()
 
     def on_click_menu_edit(self):
         row_index = self.table.currentIndex().row()
-        pass
+        order_info: OrderSaleDto = self.table.item(row_index, 1).order_info
+        self.view_form = OrderDetailForm()
+        self.view_form.init_ui(self.current_user, self.order_id, False)
+        self.view_form.load_data(order_info.id, order_info.order_no, 2)
+        self.view_form.signal_ok.connect(self.update_order_detail)
+        self.view_form.show()
 
     def on_click_menu_export(self):
         row_index = self.table.currentIndex().row()

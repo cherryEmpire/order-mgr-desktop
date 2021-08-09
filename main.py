@@ -38,27 +38,27 @@ class MainApp:
         self.app = QApplication(sys.argv)
         self.load_qss()
 
-        self.splash = SystemSplashScreen()
-        self.splash.init_ui()
-        self.splash.show()
-        self.app.processEvents()
-        self.login_form = LoginForm()
-
-        timer = QElapsedTimer()
-        timer.start()
-        splash_time = 1000
-        max_percent = splash_time / 100
-        while timer.elapsed() < splash_time:
-            QApplication.processEvents()
-            timer.elapsed() / max_percent
-            self.splash.progress_bar.setValue(timer.elapsed() / max_percent)
-        self.splash.finish(self.login_form)
-        self.splash.deleteLater()
-        self.main_controller = MainController(self.login_form)
-        self.login_form.signal_login.connect(self.main_controller.do_click_login)
-        self.login_form.signal_register.connect(self.main_controller.do_click_register)
-        self.login_form.show()
-        # self.test()
+        # self.splash = SystemSplashScreen()
+        # self.splash.init_ui()
+        # self.splash.show()
+        # self.app.processEvents()
+        # self.login_form = LoginForm()
+        #
+        # timer = QElapsedTimer()
+        # timer.start()
+        # splash_time = 1000
+        # max_percent = splash_time / 100
+        # while timer.elapsed() < splash_time:
+        #     QApplication.processEvents()
+        #     timer.elapsed() / max_percent
+        #     self.splash.progress_bar.setValue(timer.elapsed() / max_percent)
+        # self.splash.finish(self.login_form)
+        # self.splash.deleteLater()
+        # self.main_controller = MainController(self.login_form)
+        # self.login_form.signal_login.connect(self.main_controller.do_click_login)
+        # self.login_form.signal_register.connect(self.main_controller.do_click_register)
+        # self.login_form.show()
+        self.test()
         self.app.exec_()
 
     def load_qss(self):
