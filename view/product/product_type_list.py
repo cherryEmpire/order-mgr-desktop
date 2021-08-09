@@ -9,6 +9,7 @@ from db.product_info import ProductInfo
 from db.product_type import ProductType
 from utils.constants import SYSTEM_FONT
 from view.components.common_components import DeleteMessageBox
+from view.components.list_item_widget import ListItemWidget
 from view.components.new_add_dialog import NewAddDialog
 
 
@@ -80,6 +81,15 @@ class ProductTypeList(QWidget):
         id = product_type.insert_product_type(values[0], values[1], values[2])
         self.add_item(id, values[0], values[1], values[2])
 
+    def update_product_type(self, keys, values):
+        product_type = ProductType()
+        item_widget = self.edit_form.item_widget
+        product_type.update_product_type(item_widget.item.id, values[0], values[1], values[2])
+        item_widget.label.setText(values[0])
+        item_widget.item.type_name = values[0]
+        item_widget.item.type_no = values[1]
+        item_widget.item.type_desc = values[2]
+
     def load_data(self):
         product_type = ProductType()
         data = product_type.fetch_data()
@@ -87,7 +97,7 @@ class ProductTypeList(QWidget):
             self.add_item(row[0], row[1], row[2], row[3])
 
     def add_item(self, id, type_name, type_no, type_desc):
-        item = QListWidgetItem(type_name)
+        item = QListWidgetItem()
         item.id = id
         item.type_name = type_name
         item.type_no = type_no
@@ -96,6 +106,38 @@ class ProductTypeList(QWidget):
         item.setFont(q_font)
         item.setSizeHint(QSize(100, 30))
         self.list.addItem(item)
+
+        item_widget = ListItemWidget(self.list)
+        item_widget.item = item
+        item_widget.label.setText(type_name)
+        item_widget.signal_edit_clicked.connect(self.on_edit_button_clicked)
+        item_widget.signal_view_clicked.connect(self.on_view_button_clicked)
+        self.list.setItemWidget(item, item_widget)
+
+    def on_edit_button_clicked(self, item_widget):
+        self.list.setItemSelected(item_widget.item, True)
+        self.signal_item_click.emit(item_widget.item)
+        self.edit_form = NewAddDialog()
+        self.edit_form.item_widget = item_widget
+        self.edit_form.init_ui(item_widget.item.type_name, ['名称', '编号', '描述'])
+        self.edit_form.signal_ok.connect(self.update_product_type)
+        item_id = item_widget.item.id
+        product_type = ProductType()
+        data = product_type.query_product_type_by_id(item_id)[0]
+        self.edit_form.load_data(data[1:], 2)
+        self.edit_form.show()
+
+    def on_view_button_clicked(self, item_widget):
+        self.list.setItemSelected(item_widget.item, True)
+        self.signal_item_click.emit(item_widget.item)
+        self.view_form = NewAddDialog()
+        self.view_form.init_ui(item_widget.item.type_name, ['名称', '编号', '描述'])
+
+        item_id = item_widget.item.id
+        product_type = ProductType()
+        data = product_type.query_product_type_by_id(item_id)[0]
+        self.view_form.load_data(data[1:], 1)
+        self.view_form.show()
 
     def on_list_item_click(self, *args, **kwargs):
         item: QListWidgetItem = args[0]

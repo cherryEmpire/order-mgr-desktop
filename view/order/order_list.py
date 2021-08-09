@@ -116,6 +116,7 @@ class OrderList(QWidget):
         self.signal_item_click.emit(item_widget.item)
         self.edit_form = OrderInfoForm()
         self.edit_form.init_ui()
+        self.edit_form.setWindowTitle(item_widget.item.order_name + item_widget.item.order_type)
         item_id = item_widget.item.id
         info = OrderInfo()
         order_data = info.query_order_info_by_id(item_id)[0]
@@ -129,6 +130,7 @@ class OrderList(QWidget):
         self.signal_item_click.emit(item_widget.item)
         self.view_form = OrderInfoForm()
         self.view_form.init_ui()
+        self.view_form.setWindowTitle(item_widget.item.order_name + item_widget.item.order_type)
         item_id = item_widget.item.id
         info = OrderInfo()
         order_data = info.query_order_info_by_id(item_id)[0]
