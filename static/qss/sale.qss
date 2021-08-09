@@ -45,3 +45,22 @@ QPushButton#table_operate_button {
     border: none;
 }
 
+QPushButton#list-item-edit-button {
+    margin: 0px;
+    border: none;
+}
+
+QPushButton#list-item-edit-button::hover {
+    margin: 0px;
+    border: none;
+    background: #DCDCDC;
+    color: #DCDCDC;
+}
+
+QPushButton#list-item-edit-button::pressed {
+    margin: 0px;
+    border: none;
+    background: #ABA9B2;
+    color: #ABA9B2;
+}
+

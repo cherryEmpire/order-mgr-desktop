@@ -21,6 +21,11 @@ class OrderInfo:
         row_id = self.cur.execute("SELECT last_insert_rowid() from order_info")
         return row_id.lastrowid
 
+    def update_order_info(self, order_id, order_name, order_type_name, company_name, company_address, tel_no, phone_no, qq_no, order_desc):
+        self.cur.execute("""UPDATE order_info
+                    SET order_name=?, order_type_name=?, company_name=?, company_address=?, tel_no=?, phone_no=?, qq_no=?, order_desc=? WHERE id=?""", [order_name, order_type_name, company_name, company_address, tel_no, phone_no, qq_no, order_desc, order_id])
+        self.commit()
+
     def delete_order_info(self, id):
         self.cur.execute("DELETE FROM order_info where id = ?", [id])
         self.commit()

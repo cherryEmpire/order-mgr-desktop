@@ -23,6 +23,8 @@
         <file>icons/menu/edit.png</file>
         <file>icons/menu/rename.png</file>
         <file>icons/main.png</file>
+        <file>icons/edit.png</file>
+        <file>icons/view.png</file>
     </qresource>
 
     <qresource prefix="image">

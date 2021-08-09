@@ -9,6 +9,7 @@ from db.order_info import OrderInfo
 from db.order_sale_list import OrderSaleList
 from utils.constants import SYSTEM_FONT
 from view.components.common_components import DeleteMessageBox
+from view.components.list_item_widget import ListItemWidget
 from view.order.order_info_form import OrderInfoForm
 
 
@@ -80,6 +81,14 @@ class OrderList(QWidget):
         id = order_info.insert_order_info(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7])
         self.add_item(id, values[0], values[1])
 
+    def update_order(self, keys, values):
+        order_info = OrderInfo()
+        item_id = self.edit_form.item_widget.item.id
+        order_info.update_order_info(item_id, values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7])
+        self.edit_form.item_widget.item.order_name = values[0]
+        self.edit_form.item_widget.item.order_type = values[1]
+        self.edit_form.item_widget.label.setText(values[0] + values[1])
+
     def load_data(self):
         order_info = OrderInfo()
         data = order_info.fetch_data()
@@ -87,7 +96,7 @@ class OrderList(QWidget):
             self.add_item(row[0], row[1], row[2])
 
     def add_item(self, id, order_name, order_type):
-        item = QListWidgetItem(order_name + order_type)
+        item = QListWidgetItem()
         item.id = id
         item.order_name = order_name
         item.order_type = order_type
@@ -95,6 +104,36 @@ class OrderList(QWidget):
         item.setFont(q_font)
         item.setSizeHint(QSize(100, 30))
         self.list.addItem(item)
+        item_widget = ListItemWidget(self.list)
+        item_widget.item = item
+        item_widget.label.setText(order_name + order_type)
+        item_widget.signal_edit_clicked.connect(self.on_edit_button_clicked)
+        item_widget.signal_view_clicked.connect(self.on_view_button_clicked)
+        self.list.setItemWidget(item, item_widget)
+
+    def on_edit_button_clicked(self, item_widget):
+        self.list.setItemSelected(item_widget.item, True)
+        self.signal_item_click.emit(item_widget.item)
+        self.edit_form = OrderInfoForm()
+        self.edit_form.init_ui()
+        item_id = item_widget.item.id
+        info = OrderInfo()
+        order_data = info.query_order_info_by_id(item_id)[0]
+        self.edit_form.item_widget = item_widget
+        self.edit_form.signal_ok.connect(self.update_order)
+        self.edit_form.load_data(order_data[1:], 2)
+        self.edit_form.show()
+
+    def on_view_button_clicked(self, item_widget):
+        self.list.setItemSelected(item_widget.item, True)
+        self.signal_item_click.emit(item_widget.item)
+        self.view_form = OrderInfoForm()
+        self.view_form.init_ui()
+        item_id = item_widget.item.id
+        info = OrderInfo()
+        order_data = info.query_order_info_by_id(item_id)[0]
+        self.view_form.load_data(order_data[1:], 1)
+        self.view_form.show()
 
     def on_list_item_click(self, *args, **kwargs):
         item: QListWidgetItem = args[0]

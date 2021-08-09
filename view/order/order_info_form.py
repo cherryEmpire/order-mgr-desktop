@@ -90,3 +90,22 @@ class OrderInfoForm(QDialog):
             item.setText(item_text)
             model.appendRow(item)
         self.order_type.setModel(model)
+
+    def load_data(self, data, mode):
+        self.order_name.setText(data[0])
+        self.order_type.setCurrentText(data[1])
+        self.company_name.setText(data[2])
+        self.company_address.setText(data[3])
+        self.tel_no.setText(data[4])
+        self.phone_no.setText(data[5])
+        self.qq_no.setText(data[6])
+        self.order_desc.setPlainText(data[7])
+        if mode == 1:
+            self.order_name.setEnabled(False)
+            self.order_type.setEnabled(False)
+            self.company_name.setEnabled(False)
+            self.company_address.setEnabled(False)
+            self.tel_no.setEnabled(False)
+            self.phone_no.setEnabled(False)
+            self.qq_no.setEnabled(False)
+            self.order_desc.setEnabled(False)
