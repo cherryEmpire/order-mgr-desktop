@@ -149,6 +149,10 @@ class OrderSaleList:
         self.cur.execute("DELETE FROM order_sale_list where id = ?", [id])
         self.commit()
 
+    def delete_order_sale_list_by_order_id(self, order_id):
+        self.cur.execute("DELETE FROM order_sale_list where order_id = ?", [order_id])
+        self.commit()
+
     def delete_order_sale_list_by_no(self, order_no):
         self.cur.execute("DELETE FROM order_sale_list where order_no = ?", [order_no])
         self.commit()

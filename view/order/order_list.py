@@ -6,12 +6,14 @@ from PySide2.QtGui import QFont, QIcon
 from PySide2.QtWidgets import QWidget, QVBoxLayout, QListWidget, QListWidgetItem, QLabel, QHBoxLayout, QPushButton
 
 from db.order_info import OrderInfo
+from db.order_sale_list import OrderSaleList
 from utils.constants import SYSTEM_FONT
 from view.order.order_info_form import OrderInfoForm
 
 
 class OrderList(QWidget):
     signal_item_click = Signal(object)
+    signal_item_remove = Signal(object)
 
     def init_ui(self):
         self.main_layout = QVBoxLayout(self)
@@ -61,7 +63,10 @@ class OrderList(QWidget):
         item_id = item.id
         info = OrderInfo()
         info.delete_order_info(item_id)
+        sale_list = OrderSaleList()
+        sale_list.delete_order_sale_list_by_order_id(item_id)
         self.list.takeItem(self.list.currentIndex().row())
+        self.signal_item_remove.emit(self)
 
     def add_new_order(self, keys, values):
         order_info = OrderInfo()

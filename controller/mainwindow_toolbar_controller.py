@@ -16,7 +16,16 @@ class MainWindowToolBarContext(QObject):
 
     def open_order(self):
         self.mainwindow.order_list.setVisible(True)
-        self.mainwindow.order_list_item_table.setVisible(True)
+        count = self.mainwindow.order_list.list.count()
+        if count == 0:
+            self.mainwindow.order_list_item_table.setVisible(False)
+        else:
+
+            items = self.mainwindow.order_list.list.selectedItems()
+            if items is None or len(items) == 0:
+                self.mainwindow.order_list_item_table.setVisible(False)
+            else:
+                self.mainwindow.order_list_item_table.setVisible(True)
         self.mainwindow.product_type_list.setVisible(False)
         self.mainwindow.product_info_table.setVisible(False)
 
@@ -24,7 +33,15 @@ class MainWindowToolBarContext(QObject):
         self.mainwindow.order_list.setVisible(False)
         self.mainwindow.order_list_item_table.setVisible(False)
         self.mainwindow.product_type_list.setVisible(True)
-        # self.mainwindow.product_info_table.setVisible(True)
+        count = self.mainwindow.product_type_list.list.count()
+        if count == 0:
+            self.mainwindow.product_info_table.setVisible(False)
+        else:
+            items = self.mainwindow.product_type_list.list.selectedItems()
+            if items is None or len(items) == 0:
+                self.mainwindow.product_info_table.setVisible(False)
+            else:
+                self.mainwindow.product_info_table.setVisible(True)
 
     def open_help(self):
         pass
@@ -45,3 +62,9 @@ class MainWindowToolBarContext(QObject):
         self.mainwindow.order_list_item_table.current_user = self.current_user
         self.mainwindow.order_list_item_table.re_load_data()
         self.mainwindow.order_list_item_table.setVisible(True)
+
+    def on_remove_order(self, obj):
+        self.mainwindow.order_list_item_table.setVisible(False)
+
+    def on_remove_product(self, obj):
+        self.mainwindow.product_info_table.setVisible(False)

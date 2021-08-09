@@ -25,6 +25,10 @@ class ProductInfo:
         self.cur.execute("DELETE FROM product_info where id = ?", [id])
         self.commit()
 
+    def delete_product_info_by_type(self, product_type):
+        self.cur.execute("DELETE FROM product_info where product_type = ?", [product_type])
+        self.commit()
+
     def query_product_info_by_id(self, id):
         result = []
         for row in self.cur.execute("SELECT id, product_type, product_name, product_no, product_price, product_desc FROM product_info where id = ?", [id]):

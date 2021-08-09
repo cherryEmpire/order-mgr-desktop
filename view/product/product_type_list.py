@@ -5,6 +5,7 @@ from PySide2.QtCore import Qt, Signal, QSize
 from PySide2.QtGui import QFont, QIcon
 from PySide2.QtWidgets import QWidget, QVBoxLayout, QListWidget, QListWidgetItem, QPushButton, QLabel, QHBoxLayout
 
+from db.product_info import ProductInfo
 from db.product_type import ProductType
 from utils.constants import SYSTEM_FONT
 from view.components.new_add_dialog import NewAddDialog
@@ -12,6 +13,7 @@ from view.components.new_add_dialog import NewAddDialog
 
 class ProductTypeList(QWidget):
     signal_item_click = Signal(object)
+    signal_item_remove = Signal(object)
 
     def init_ui(self):
         self.main_layout = QVBoxLayout(self)
@@ -61,7 +63,10 @@ class ProductTypeList(QWidget):
         item_id = item.id
         product_type = ProductType()
         product_type.delete_product_type(item_id)
+        product_info = ProductInfo()
+        product_info.delete_product_info_by_type(item_id)
         self.list.takeItem(self.list.currentIndex().row())
+        self.signal_item_remove.emit(self)
 
     def add_new_product_type(self, keys, values):
         product_type = ProductType()

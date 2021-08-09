@@ -97,6 +97,7 @@ class OrderMainWindow(QMainWindow):
         self.order_list.setVisible(True)
         self.order_list.signal_item_click.connect(self.toolbar_context.on_click_order_list_item)
         self.left_layout.addWidget(self.order_list, 1)
+        self.order_list.signal_item_remove.connect(self.toolbar_context.on_remove_order)
 
     def init_order_info_table(self):
         self.order_list_item_table = OrderListItemTable(self.right_frame)
@@ -110,6 +111,7 @@ class OrderMainWindow(QMainWindow):
         self.product_type_list.setVisible(False)
         self.product_type_list.signal_item_click.connect(self.toolbar_context.on_click_product_type_list_item)
         self.left_layout.addWidget(self.product_type_list, 1)
+        self.product_type_list.signal_item_remove.connect(self.toolbar_context.on_remove_product)
 
     def init_product_info_table(self):
         self.product_info_table = ProductInfoTable(self.right_frame)
