@@ -140,9 +140,9 @@ class OrderSaleList:
         product_list = product_list_tostr(order_sale_dto.product_list)
         self.cur.execute("""UPDATE order_sale_list
                     SET order_id=?, order_no=?, customer_company=?, customer_name=?, customer_phone=?, product_list=?, 
-                    last_edit_user=?, last_edit_date=?, order_manager=?, goods_sender=?, goods_receiver=?""",
+                    last_edit_user=?, last_edit_date=?, order_manager=?, goods_sender=?, goods_receiver=? where id=?""",
                          [order_sale_dto.order_id, order_sale_dto.order_no, order_sale_dto.customer_company, order_sale_dto.customer_name, order_sale_dto.customer_phone,
-                          product_list, order_sale_dto.last_edit_user, now, order_sale_dto.order_manager, order_sale_dto.goods_sender, order_sale_dto.goods_receiver])
+                          product_list, order_sale_dto.last_edit_user, now, order_sale_dto.order_manager, order_sale_dto.goods_sender, order_sale_dto.goods_receiver, order_sale_dto.id])
         self.commit()
 
     def delete_order_sale_list_by_id(self, id):

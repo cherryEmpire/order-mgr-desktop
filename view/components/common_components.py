@@ -55,6 +55,18 @@ class MessageBox(QMessageBox):
         self.closeBtn.setText('关闭')
 
 
+class DeleteMessageBox(QMessageBox):
+
+    def __init__(self, *args, **kwargs):
+        super(DeleteMessageBox, self).__init__(*args, **kwargs)
+        self.setWindowIcon(QIcon(':/icon/icons/main.png'))
+        self.setStandardButtons(self.Ok | self.Cancel)
+        self.cancelBtn = self.button(self.Cancel)
+        self.cancelBtn.setText('取消')
+        self.deleteBtn = self.button(self.Ok)
+        self.deleteBtn.setText('删除')
+
+
 class ReadOnlyDelegate(QItemDelegate):
 
     def createEditor(self, parent: QtWidgets.QWidget, option: QtWidgets.QStyleOptionViewItem, index: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex]) -> QtWidgets.QWidget:

@@ -178,7 +178,7 @@ class OrderDetailForm(QDialog):
         amount_horizontal_header.setSectionResizeMode(6, QHeaderView.Fixed)
         self.amount_table.setColumnWidth(0, 80)
         self.amount_table.setColumnWidth(1, 400)
-        self.amount_table.setColumnWidth(6, 400)
+        self.amount_table.setColumnWidth(6, 250)
         self.amount_table.setItemDelegateForColumn(0, delegate)
         self.amount_table.setItemDelegateForColumn(1, delegate)
         self.amount_table.setItemDelegateForColumn(2, delegate)

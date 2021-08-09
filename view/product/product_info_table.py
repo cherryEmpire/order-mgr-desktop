@@ -2,12 +2,12 @@
 # @Author   : 翁鑫豪
 # @Description   : product_info_table.py
 
-from PySide2.QtCore import QRegExp, Qt
-from PySide2.QtGui import QIcon, QRegExpValidator
-from PySide2.QtWidgets import QWidget, QVBoxLayout, QPushButton, QTableWidget, QStyleFactory, QHeaderView, QAbstractItemView, QLineEdit, QTableWidgetItem
+from PySide2.QtCore import QRegExp, Qt, QSize
+from PySide2.QtGui import QIcon, QRegExpValidator, QCursor
+from PySide2.QtWidgets import QWidget, QVBoxLayout, QPushButton, QTableWidget, QStyleFactory, QHeaderView, QAbstractItemView, QLineEdit, QTableWidgetItem, QMenu, QAction
 
 from db.product_info import ProductInfo
-from view.components.common_components import ReadOnlyDelegate
+from view.components.common_components import ReadOnlyDelegate, DeleteMessageBox
 from view.components.new_add_dialog import NewAddDialog
 
 
@@ -92,6 +92,13 @@ class ProductInfoTable(QWidget):
         product_desc_cell.setTextAlignment(Qt.AlignCenter)
         self.table.setItem(row_index, 4, product_desc_cell)
 
+        operate_button = QPushButton()
+        operate_button.setIcon(QIcon(':/icon/icons/operate_button.png'))
+        operate_button.setIconSize(QSize(16, 16))
+        operate_button.setObjectName("table_operate_button")
+        operate_button.clicked.connect(self.__click_operate_button)
+        self.table.setCellWidget(row_index, 5, operate_button)
+
     def load_data(self):
         product_info = ProductInfo()
         data = product_info.fetch_data_by_product_type(self.product_type_id)
@@ -106,3 +113,89 @@ class ProductInfoTable(QWidget):
         row_count = self.table.rowCount()
         for i in range(row_count):
             self.table.removeRow(0)
+
+    def __click_operate_button(self, *args, **kwargs):
+        self.menu = QMenu()
+
+        menu_action_open = QAction(QIcon(':/icon/icons/menu/open.png'), '查看', self.menu)
+        menu_action_open.triggered.connect(self.on_click_menu_view)
+        self.menu.addAction(menu_action_open)
+
+        menu_action_copy_open = QAction(QIcon(':/icon/icons/menu/edit.png'), '编辑', self.menu)
+        menu_action_copy_open.triggered.connect(self.on_click_menu_edit)
+        self.menu.addAction(menu_action_copy_open)
+
+        menu_action_delete = QAction(QIcon(':/icon/icons/menu/delete.png'), '删除', self.menu)
+        menu_action_delete.triggered.connect(self.on_click_menu_delete)
+        self.menu.addAction(menu_action_delete)
+
+        self.menu.addSeparator()
+
+        menu_action_cancel = QAction(QIcon(':/icon/icons/menu/cancel.png'), '取消', self.menu)
+        menu_action_cancel.triggered.connect(self.on_click_menu_cancel)
+        self.menu.addAction(menu_action_cancel)
+
+        self.menu.exec_(QCursor.pos())
+
+    def on_click_menu_view(self):
+        row_index = self.table.currentIndex().row()
+        item = self.table.item(row_index, 1)
+        info_id = item.product_info_id
+        product_info = ProductInfo()
+        data = product_info.query_product_info_by_id(info_id)[0]
+        self.view_form = NewAddDialog()
+        self.view_form.init_ui(data[2], self.keys)
+        self.view_form.load_data(data[2:], 1)
+        self.view_form.signal_ok.connect(self.on_click_menu_cancel)
+        self.view_form.show()
+
+    def on_click_menu_edit(self):
+        row_index = self.table.currentIndex().row()
+        item = self.table.item(row_index, 1)
+        info_id = item.product_info_id
+        product_info = ProductInfo()
+        data = product_info.query_product_info_by_id(info_id)[0]
+        self.edit_form = NewAddDialog()
+        self.edit_form.init_ui(data[2], self.keys)
+        price_edit: QLineEdit = self.edit_form.edit_list[2]
+        price_edit.setValidator(self.reg_exp_validator)
+        self.edit_form.load_data(data[2:], 2)
+        self.edit_form.signal_ok.connect(self.on_update_product_info)
+        self.edit_form.show()
+
+    def on_click_menu_delete(self):
+        self.delete_box = DeleteMessageBox(text='是否删除此产品信息？')
+        self.delete_box.setWindowTitle('警告')
+        self.delete_box.deleteBtn.clicked.connect(self.do_delete)
+        self.delete_box.show()
+
+    def do_delete(self):
+        row_index = self.table.currentIndex().row()
+        item = self.table.item(row_index, 1)
+        info_id = item.product_info_id
+        product_info = ProductInfo()
+        product_info.delete_product_info(info_id)
+        self.table.removeRow(row_index)
+        self.refresh_index()
+
+    def on_click_menu_cancel(self):
+        pass
+
+    def on_update_product_info(self, keys, data):
+        row_index = self.table.currentIndex().row()
+        item = self.table.item(row_index, 1)
+        info_id = item.product_info_id
+        product_info = ProductInfo()
+        product_info.update_product_info(info_id, self.product_type_id, data[0], data[1], data[2], data[3])
+        self.update_row(row_index, data)
+
+    def update_row(self, row_index, data):
+        self.table.item(row_index, 1).setText(data[0])
+        self.table.item(row_index, 2).setText(data[1])
+        self.table.item(row_index, 3).setText(data[2])
+        self.table.item(row_index, 4).setText(data[3])
+
+    def refresh_index(self):
+        count = self.table.rowCount()
+        for i in range(count):
+            self.table.item(i, 0).setText(str(i + 1))

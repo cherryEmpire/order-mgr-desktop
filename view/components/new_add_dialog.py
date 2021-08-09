@@ -36,6 +36,15 @@ class NewAddDialog(QDialog):
         self.main_layout.addLayout(self.button_layout)
         self.setLayout(self.main_layout)
 
+    def load_data(self, data, mode):
+        if mode == 1:
+            for i in range(len(data)):
+                self.edit_list[i].setText(str(data[i]))
+                self.edit_list[i].setEnabled(False)
+        else:
+            for i in range(len(data)):
+                self.edit_list[i].setText(str(data[i]))
+
     def onclick_ok(self):
         data = []
         for edit in self.edit_list:

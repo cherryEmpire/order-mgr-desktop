@@ -8,6 +8,7 @@ from PySide2.QtWidgets import QWidget, QVBoxLayout, QListWidget, QListWidgetItem
 from db.order_info import OrderInfo
 from db.order_sale_list import OrderSaleList
 from utils.constants import SYSTEM_FONT
+from view.components.common_components import DeleteMessageBox
 from view.order.order_info_form import OrderInfoForm
 
 
@@ -56,7 +57,7 @@ class OrderList(QWidget):
         self.new_add.signal_ok.connect(self.add_new_order)
         self.new_add.show()
 
-    def on_remove_sale_order_clicked(self):
+    def do_remove_sale_order(self):
         item = self.list.currentItem()
         if item is None:
             return
@@ -67,6 +68,12 @@ class OrderList(QWidget):
         sale_list.delete_order_sale_list_by_order_id(item_id)
         self.list.takeItem(self.list.currentIndex().row())
         self.signal_item_remove.emit(self)
+
+    def on_remove_sale_order_clicked(self):
+        self.delete_box = DeleteMessageBox(text='是否删除此单据模板？')
+        self.delete_box.setWindowTitle('警告')
+        self.delete_box.deleteBtn.clicked.connect(self.do_remove_sale_order)
+        self.delete_box.show()
 
     def add_new_order(self, keys, values):
         order_info = OrderInfo()

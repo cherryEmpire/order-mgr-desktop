@@ -21,6 +21,12 @@ class ProductInfo:
         row_id = self.cur.execute("SELECT last_insert_rowid() from product_info")
         return row_id.lastrowid
 
+    def update_product_info(self, product_id, product_type, product_name, product_no, product_price, product_desc):
+        self.cur.execute("""UPDATE product_info
+                            SET product_type=?, product_name=?, product_no=?, product_price=?, product_desc=? where id=?""",
+                         [product_type, product_name, product_no, product_price, product_desc, product_id])
+        self.commit()
+
     def delete_product_info(self, id):
         self.cur.execute("DELETE FROM product_info where id = ?", [id])
         self.commit()

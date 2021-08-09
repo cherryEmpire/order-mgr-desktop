@@ -8,6 +8,7 @@ from PySide2.QtWidgets import QWidget, QVBoxLayout, QListWidget, QListWidgetItem
 from db.product_info import ProductInfo
 from db.product_type import ProductType
 from utils.constants import SYSTEM_FONT
+from view.components.common_components import DeleteMessageBox
 from view.components.new_add_dialog import NewAddDialog
 
 
@@ -56,7 +57,7 @@ class ProductTypeList(QWidget):
         self.new_add.signal_ok.connect(self.add_new_product_type)
         self.new_add.show()
 
-    def on_remove_product_type_clicked(self):
+    def do_remove_product_type(self):
         item = self.list.currentItem()
         if item is None:
             return
@@ -67,6 +68,12 @@ class ProductTypeList(QWidget):
         product_info.delete_product_info_by_type(item_id)
         self.list.takeItem(self.list.currentIndex().row())
         self.signal_item_remove.emit(self)
+
+    def on_remove_product_type_clicked(self):
+        self.delete_box = DeleteMessageBox(text='是否删除此商品大类？')
+        self.delete_box.setWindowTitle('警告')
+        self.delete_box.deleteBtn.clicked.connect(self.do_remove_product_type)
+        self.delete_box.show()
 
     def add_new_product_type(self, keys, values):
         product_type = ProductType()

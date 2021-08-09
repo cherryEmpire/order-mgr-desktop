@@ -8,7 +8,7 @@ from PySide2.QtWidgets import QWidget, QVBoxLayout, QPushButton, QTableWidget, Q
 
 from db.order_sale_list import OrderSaleList, OrderSaleDto
 from db.user_info import UserDto
-from view.components.common_components import ReadOnlyDelegate
+from view.components.common_components import ReadOnlyDelegate, DeleteMessageBox
 from view.order.order_item_form import OrderDetailForm
 
 
@@ -76,9 +76,15 @@ class OrderListItemTable(QWidget):
         self.add_row(data)
 
     def update_order_detail(self, keys, data: OrderSaleDto):
+        row_index = self.table.currentIndex().row()
         order_sale_list = OrderSaleList()
         data.last_edit_user = self.current_user.full_name
         order_sale_list.update_order_sale_list(data)
+        self.update_row(row_index, data)
+
+    def update_row(self, row_index, data: OrderSaleDto):
+        self.table.item(row_index, 2).setText(str(data.get_amount()))
+        self.table.item(row_index, 4).setText(data.last_edit_date)
 
     def add_row(self, detail_dto: OrderSaleDto):
         row_index = self.table.rowCount()
@@ -190,6 +196,12 @@ class OrderListItemTable(QWidget):
         pass
 
     def on_click_menu_delete(self):
+        self.delete_box = DeleteMessageBox(text='是否删除此单据？')
+        self.delete_box.setWindowTitle('警告')
+        self.delete_box.deleteBtn.clicked.connect(self.do_delete)
+        self.delete_box.show()
+
+    def do_delete(self):
         row_index = self.table.currentIndex().row()
         order_info: OrderSaleDto = self.table.item(row_index, 1).order_info
         order_sale_list = OrderSaleList()
