@@ -1,0 +1,95 @@
+QLabel#logo_name {
+    color: #5C67D5;
+    font-family: "Microsoft YaHei UI";
+    font-size: 50px;
+}
+
+QLabel#logo_copyright {
+    color: #0188FE;
+    font-family: "Microsoft YaHei UI";
+    font-size: 15px;
+}
+
+QProgressBar#init_progress {
+    height: 15px;
+    margin: 0px;
+    background: #F0F0F0;
+    border-radius: 5px;
+    text-align: center;
+    color: #363636;
+}
+
+QProgressBar#init_progress::chunk {
+    background-color: #06B025;
+    border-radius: 4px;
+}
+
+QHeaderView#productinfo_table_header::section {
+    color: #FFFFFF;
+    font-family: "Microsoft YaHei UI";
+    font-size: 14px;
+    background: #333333;
+}
+
+QToolButton#TreeComboBox-QToolButton {
+    background: #F0F0F0;
+    border: none;
+}
+
+QLineEdit#cell-number-edit {
+    border: none;
+}
+
+QPushButton#table_operate_button {
+    margin: 0px;
+    border: none;
+}
+
+QPushButton#list-item-edit-button {
+    margin: 0px;
+    border: none;
+}
+
+QPushButton#list-item-edit-button::hover {
+    margin: 0px;
+    border: none;
+    background: #DCDCDC;
+    color: #DCDCDC;
+}
+
+QPushButton#list-item-edit-button::pressed {
+    margin: 0px;
+    border: none;
+    background: #ABA9B2;
+    color: #ABA9B2;
+}
+
+QLineEdit#cell-edit-info {
+    background: #F0F0F0;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid;
+}
+
+QPushButton#operation-button {
+    margin: 0px;
+    color: #FFFFFF;
+    background-color: #169BD5;
+    border-radius: 3px;
+    height: 30px;
+}
+
+QPushButton#operation-button::hover {
+    margin: 0px;
+    background: #4662D9;
+    height: 30px;
+}
+
+QPushButton#operation-button::pressed {
+    margin: 0px;
+    background: #169BD5;
+    height: 30px;
+}
+
+
